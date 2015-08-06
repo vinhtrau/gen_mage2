@@ -1,15 +1,19 @@
+<?php
+require "inc/ListAbstract.php";
+require "inc/Timezone.php";
+require "inc/Currency.php";
+?>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Generate Install Magento Command line</title>
-<link rel="stylesheet" type="text/css" media="all" href="css/style.css" />
-<link rel="stylesheet" type="text/css" media="all" href="js/jquery-ui-1.11.4.custom/jquery-ui.min.css" />
-<link rel="stylesheet" type="text/css" media="all" href="css/tooltipster.css" />
-<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
-<script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
-
+    <meta charset="UTF-8">
+    <title>Generate Install Magento Command line</title>
+    <link rel="stylesheet" type="text/css" media="all" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="css/tooltipster.css" />
+    <script type="text/javascript" src="js/jquery/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery.tooltipster.min.js"></script>
 </head>
 <body>
 	<div class="wrapper" id="main">
@@ -92,8 +96,15 @@
 							from your root magento folder.
 						</p>
 					</li>
-					<li class="items"><label>Currency:</label> <input type="text"
-						name="currency" class="require" value="USD" />
+					<li class="items">
+						<label>Currency:</label>
+						<select name="currency" class="require">
+							<?php $list = new Currency();?>
+							<?php foreach($list->getOptions() as $option):?>
+							<?php $selected = ($option['value'] == "USD") ? 'selected="selected"' : ''; ?>
+							<option <?php echo $selected; ?> value="<?php echo $option['value']?>"><?php echo $option['label'];?></option>
+							<?php endforeach;?>
+						</select>
 						<p class="note">
 							Default currency to use in the storefront.
 							<br/>
@@ -102,8 +113,15 @@
 							from your root magento folder.
 						</p>
 					</li>
-					<li class="items"><label>Timezone:</label> <input type="text"
-						name="timezone" class="require" value="America/New_York" />
+					<li class="items">
+						<label>Timezone:</label>
+						<select name="timezone" class="require">
+							<?php $list = new Timezone();?>
+							<?php foreach($list->getOptions() as $option):?>
+							<?php $selected = ($option['value'] == "America/New_York") ? 'selected="selected"' : ''; ?>
+							<option <?php echo $selected; ?> value="<?php echo $option['value']?>"><?php echo $option['label'];?></option>
+							<?php endforeach;?>
+						</select>
 						<p class="note">
 							Default time zone to use in the Admin and storefront
 							<br/>
@@ -121,10 +139,10 @@
 						</p>
 					</li>
 					<li class="items"><label>Use Sample data:</label>
-						<input type="checkbox" checked="checked" name="use-sample-data" class="checkbox" value="1" />
+						<input type="checkbox" checked="checked" name="use-sample-data" class="checkbox" value="_not_need_value" />
 					</li>
 					<li class="items"><label>Cleanup database:</label>
-						<input type="checkbox" checked="checked" name="cleanup-database" class="checkbox" value="1" />
+						<input type="checkbox" checked="checked" name="cleanup-database" class="checkbox" value="_not_need_value" />
 					</li>
 					<li class="items"><label>Use secure:</label>
 						<input type="checkbox" name="use-secure" class="checkbox" value="1" />
@@ -140,66 +158,6 @@
 			<button type="reset">Load Default Configuration</button>
 		</form>
 	</div>
-	<script type="text/javascript">
-	$.widget("ui.tooltip", $.ui.tooltip, {
-	    options: {
-	        content: function () {
-	            return $(this).prop('title');
-	        }
-	    }
-	});
-	$("input").attr('title',function(){
-			$(this).next('.note').hide();
-			return $(this).next('.note').html();
-	});
-	$(document).tooltip();
-
-	$('.require').prev("label").append("<em>*</em>");
-	$('#generate-input').submit(function(event){
-		event.preventDefault();
-		var hasError = 0;
-		$('.require').removeClass("error");
-		var form = $(event.currentTarget);
-		$('.require').each(function(i,e){
-			var e = $(e);
-			if(e.val() == "" || e.val() == 0){
-				e.addClass("error", 200);
-				hasError = 1;
-			}
-		});
-		if(hasError == 0){
-			$( "#dialog-message" ).remove();
-			$.ajax({
-				url: form.attr('action'),
-				type: form.attr("method"),
-				data: form.serialize(),
-				dataType: "json",
-				success: function(resp){
-					if(resp.error == 0){
-						$("body").append(resp.html);
-						$('#setup_string').focus(function(event){
-							$(this).select();
-							event.preventDefault();
-						});
-						$( "#dialog-message" ).dialog({
-					      modal: true,
-					      width: 1024,
-					      buttons: {
-					        "Select All": function() {
-					        	$('#setup_string').focus();
-					        },
-					        "Close": function(){
-					        	$( "#dialog-message" ).dialog( "close" );
-					        }
-					      }
-					    });
-					}
-				}
-			});
-		}else
-			return false;
-	});
-	
-</script>
 </body>
+<script type="text/javascript" src="js/scripts.js"></script>
 </html>

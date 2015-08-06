@@ -3,9 +3,9 @@ $includeInitSetup = true;
 $setupString = $includeInitSetup ? "php bin/magento setup:install " : "";
 if($_REQUEST){
 	foreach($_REQUEST as $key => $value){
-		if($key == "use-sample-data" || $key == "cleanup-database"){
+		if($value == "_not_need_value"){
 			$setupString .= " --" . $key;
-		}else
+		}elseif($value != "")
 			$setupString .= " --" . $key . "=" . $value;
 	}
 	$return = array("error" => 0);
